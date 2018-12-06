@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,58 +36,47 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
     private TextView tvMyCar4;
     private ImageView ivButton4;
     private TextView tvAccountSearchRecharge;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case DATA:
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
-    private GetCarSpeed mGetCarSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_car);
         initUI();
-        StatusEcho();
+        returnStatus();
     }
 
-    private void StatusEcho() {
-        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, false)) {
-            GetCarSpeed carSpeed1 = initData(1);
-            tvMyCar1.setText("车速："+carSpeed1.getCarSpeed()+"km/h");
+    private void returnStatus() {
+        boolean mycar1 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR1, false);
+        if (mycar1) {
+            initData(1);
             ivButton1.setBackgroundResource(R.drawable.start);
         } else {
-            ivButton1.setBackgroundResource(R.drawable.stop);
+            tvMyCar1.setText("0km/h");
         }
-        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, false)) {
-            GetCarSpeed carSpeed2 = initData(2);
-            tvMyCar1.setText("车速："+carSpeed2.getCarSpeed()+"km/h");
+        boolean mycar2 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR2, false);
+        if (mycar2) {
+            initData(2);
             ivButton2.setBackgroundResource(R.drawable.start);
         } else {
-            ivButton2.setBackgroundResource(R.drawable.stop);
+            tvMyCar2.setText("0km/h");
         }
-        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, false)) {
-            GetCarSpeed carSpeed3 = initData(3);
-            tvMyCar1.setText("车速："+carSpeed3.getCarSpeed()+"km/h");
+        boolean mycar3 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR3, false);
+        if (mycar3) {
+            initData(3);
             ivButton3.setBackgroundResource(R.drawable.start);
         } else {
-            ivButton3.setBackgroundResource(R.drawable.stop);
+            tvMyCar3.setText("0km/h");
         }
-        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, false)) {
-            GetCarSpeed carSpeed4 = initData(4);
-            tvMyCar1.setText("车速："+carSpeed4.getCarSpeed()+"km/h");
+        boolean mycar4 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR4, false);
+        if (mycar4) {
+            initData(4);
             ivButton4.setBackgroundResource(R.drawable.start);
         } else {
-            ivButton4.setBackgroundResource(R.drawable.stop);
+            tvMyCar4.setText("0km/h");
         }
     }
 
-    private GetCarSpeed initData(final Integer CarId) {
+    private void initData(final Integer CarId) {
         new Thread() {
             @Override
             public void run() {
@@ -94,14 +84,32 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                     String path = MyApplication.HTTP + MyApplication.HTTPGETCARSPEED;
                     String params = GenerateJsonUtil.GenerateSimple(CarId);
                     String getCarSpeedReuslt = HttpUtil.doPost(path, params);
-                    mGetCarSpeed = ResolveJson.ResolveGetCarSpeed(getCarSpeedReuslt);
+                    final GetCarSpeed getCarSpeed = ResolveJson.ResolveGetCarSpeed(getCarSpeedReuslt);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (CarId) {
+                                case 1:
+                                    tvMyCar1.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                                    break;
+                                case 2:
+                                    tvMyCar2.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                                    break;
+                                case 3:
+                                    tvMyCar3.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                                    break;
+                                case 4:
+                                    tvMyCar4.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                                    break;
+                            }
+                        }
+                    });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 super.run();
             }
         }.start();
-        return mGetCarSpeed;
     }
 
     private void initUI() {
@@ -133,28 +141,52 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.iv_button1:
-                GetCarSpeed carSpeed1 = initData(1);
-                tvMyCar1.setText("车速："+carSpeed1.getCarSpeed()+"km/h");
-                ivButton1.setBackgroundResource(R.drawable.start);
-                SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, true);
+                boolean car1 = SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, false);
+                if (!car1) {
+                    initData(1);
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, true);
+                    ivButton1.setBackgroundResource(R.drawable.start);
+                } else {
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, false);
+                    ivButton1.setBackgroundResource(R.drawable.stop);
+                    tvMyCar1.setText("0km/h");
+                }
                 break;
             case R.id.iv_button2:
-                GetCarSpeed carSpeed2 = initData(2);
-                tvMyCar1.setText("车速："+carSpeed2.getCarSpeed()+"km/h");
-                ivButton1.setBackgroundResource(R.drawable.start);
-                SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, true);
+                boolean car2 = SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, false);
+                if (!car2) {
+                    initData(2);
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, true);
+                    ivButton2.setBackgroundResource(R.drawable.start);
+                } else {
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, false);
+                    ivButton2.setBackgroundResource(R.drawable.stop);
+                    tvMyCar2.setText("0km/h");
+                }
                 break;
             case R.id.iv_button3:
-                GetCarSpeed carSpeed3 = initData(3);
-                tvMyCar1.setText("车速："+carSpeed3.getCarSpeed()+"km/h");
-                ivButton1.setBackgroundResource(R.drawable.start);
-                SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, true);
+                boolean car3 = SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, false);
+                if (!car3) {
+                    initData(3);
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, true);
+                    ivButton3.setBackgroundResource(R.drawable.start);
+                } else {
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, false);
+                    ivButton3.setBackgroundResource(R.drawable.stop);
+                    tvMyCar3.setText("0km/h");
+                }
                 break;
             case R.id.iv_button4:
-                GetCarSpeed carSpeed4 = initData(4);
-                tvMyCar4.setText("车速："+carSpeed4.getCarSpeed()+"km/h");
-                ivButton1.setBackgroundResource(R.drawable.start);
-                SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, true);
+                boolean car4 = SpUtil.getBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, false);
+                if (!car4) {
+                    initData(4);
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, true);
+                    ivButton4.setBackgroundResource(R.drawable.start);
+                } else {
+                    SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, false);
+                    ivButton4.setBackgroundResource(R.drawable.stop);
+                    tvMyCar4.setText("0km/h");
+                }
                 break;
             case R.id.tv_account_search_recharge:
                 break;

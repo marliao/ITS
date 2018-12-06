@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.marliao.intelligenttransportation">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".enige.MyApplication"
@@ -21,8 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.SettingActivity" />
-        <activity android:name=".Activity.MyCarActivity"></activity>
+        <activity
+            android:name=".Activity.SettingActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".Activity.MyCarActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

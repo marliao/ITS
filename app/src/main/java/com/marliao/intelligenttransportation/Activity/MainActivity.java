@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<Bus2BusStation> busStation2 = (List<Bus2BusStation>) mainAllInfo.get("BusStation2");
         String station2="\n";
         for (int i = 0; i < busStation2.size(); i++) {
-            station2+=busStation1.get(i).getBusId()+"号公交："+busStation1.get(i).getDistance()+"m \n\n";
+            station2+=busStation2.get(i).getBusId()+"号公交："+busStation2.get(i).getDistance()+"m \n\n";
         }
-        tv_bus1.setText(station2);
+        tv_bus2.setText(station2);
     }
 
     @Override
