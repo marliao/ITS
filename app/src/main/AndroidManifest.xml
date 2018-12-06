@@ -26,7 +26,8 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".Activity.MyCarActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
+        <activity android:name=".Activity.CarAccountActivity"></activity>
     </application>
 
 </manifest>
