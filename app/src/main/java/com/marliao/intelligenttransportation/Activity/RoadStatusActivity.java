@@ -1,6 +1,8 @@
 package com.marliao.intelligenttransportation.Activity;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +16,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.marliao.intelligenttransportation.R;
+import com.marliao.intelligenttransportation.Utils.ConstantValue;
+import com.marliao.intelligenttransportation.Utils.GenerateJsonUtil;
+import com.marliao.intelligenttransportation.Utils.HttpUtil;
+import com.marliao.intelligenttransportation.Utils.ResolveJson;
+import com.marliao.intelligenttransportation.Utils.SpUtil;
+import com.marliao.intelligenttransportation.db.dao.GetRoadStatus;
+import com.marliao.intelligenttransportation.enige.MyApplication;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +34,14 @@ public class RoadStatusActivity extends AppCompatActivity {
     private Button btnSearch;
     private ListView lvTableItem;
     private ImageView ivReturnActivity;
+    private List<GetRoadStatus> mGetRoadStatusList;
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            //
+            super.handleMessage(msg);
+        }
+    };
 
 
     @Override
@@ -30,7 +49,47 @@ public class RoadStatusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_road_status);
         initUI();
+        initData();
         setSpinnerData();//下拉列表的数据
+    }
+
+    private void initData() {
+        mGetRoadStatusList = new ArrayList<>();
+        for (int i=1;i<6;i++){
+            initRoadStatusData(i);
+        }
+    }
+
+    /**
+     * 路况信息数据
+     */
+    private void initRoadStatusData(final Integer RoadId) {
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    String http=null;
+                    if (SpUtil.getBoolean(RoadStatusActivity.this, ConstantValue.IPSETTING, false)) {
+                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(RoadStatusActivity.this,ConstantValue.IPVALUE,""));
+                    }else {
+                        http=MyApplication.HTTP;
+                    }
+                    String generateResult = GenerateJsonUtil.GenerateGetRoadStatus(RoadId);
+                    String httpResult = HttpUtil.doPost(http, generateResult);
+                    GetRoadStatus getRoadStatus = ResolveJson.ResolveGetRoadStatus(httpResult);
+                    mGetRoadStatusList.add(getRoadStatus);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                super.run();
+            }
+        }.start();
     }
 
     private void setSpinnerData() {
