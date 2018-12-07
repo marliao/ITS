@@ -88,8 +88,8 @@ public class RoadStatusActivity extends AppCompatActivity {
      * 黄灯降序
      */
     private void yellowLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size(); j++) {
+        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
+            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
                 if (mGetTrafficLightConfigActionList.get(j).getYellowTime() < mGetTrafficLightConfigActionList.get(j + 1).getYellowTime()) {
                     GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
                     getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
@@ -106,8 +106,8 @@ public class RoadStatusActivity extends AppCompatActivity {
      * 绿灯降序
      */
     private void greenLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size(); j++) {
+        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
+            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
                 if (mGetTrafficLightConfigActionList.get(j).getGreenTime() < mGetTrafficLightConfigActionList.get(j + 1).getGreenTime()) {
                     GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
                     getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
@@ -124,8 +124,8 @@ public class RoadStatusActivity extends AppCompatActivity {
      * 红灯降序
      */
     private void redLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size(); j++) {
+        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
+            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
                 if (mGetTrafficLightConfigActionList.get(j).getRedTime() < mGetTrafficLightConfigActionList.get(j + 1).getRedTime()) {
                     GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
                     getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
