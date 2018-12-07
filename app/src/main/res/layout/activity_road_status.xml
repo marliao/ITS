@@ -81,7 +81,7 @@
                 android:layout_height="30dp"
                 android:background="@drawable/bg_table"
                 android:gravity="center"
-                android:padding="1dp"
+                android:padding="0.5dp"
                 android:text="路口"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -91,7 +91,7 @@
                 android:layout_height="30dp"
                 android:background="@drawable/bg_table"
                 android:gravity="center"
-                android:padding="1dp"
+                android:padding="0.5dp"
                 android:text="红灯时长/s"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -101,7 +101,7 @@
                 android:layout_height="30dp"
                 android:background="@drawable/bg_table"
                 android:gravity="center"
-                android:padding="1dp"
+                android:padding="0.5dp"
                 android:text="绿灯时长/s"
                 android:textColor="#000"
                 android:textSize="18sp" />
@@ -111,17 +111,14 @@
                 android:layout_height="30dp"
                 android:background="@drawable/bg_table"
                 android:gravity="center"
-                android:padding="1dp"
+                android:padding="0.5dp"
                 android:text="黄灯时长/s"
                 android:textColor="#000"
                 android:textSize="18sp" />
         </TableRow>
 
         <ListView
-            android:id="@+id/lv_table_item"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingBottom="1dp"></ListView>
+            android:id="@+id/lv_table_item"></ListView>
     </TableLayout>
 
 </LinearLayout>

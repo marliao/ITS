@@ -77,4 +77,14 @@ public class GenerateJsonUtil {
         return path;
     }
 
+    /**
+     * 查询红绿灯信息的入参
+     * @param TrafficLightId
+     * @return
+     */
+    public static String GenerateGetTrafficLightConfigAction(Integer TrafficLightId){
+        String jsonStr="{\"TrafficLightId\":"+TrafficLightId+"}";
+        return jsonStr;
+    }
+
 }

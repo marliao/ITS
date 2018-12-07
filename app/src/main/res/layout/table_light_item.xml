@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <TextView
+        android:id="@+id/tv_road_id"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="0.5dp"
+        android:layout_weight="1"
+        android:background="#fff"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_red_light"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="0.5dp"
+        android:layout_marginRight="0.5dp"
+        android:layout_weight="1"
+        android:background="#fff"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_green_light"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="0.5dp"
+        android:layout_marginRight="0.5dp"
+        android:layout_weight="1"
+        android:background="#fff"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_yellow_light"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="0.5dp"
+        android:layout_marginRight="1dp"
+        android:layout_weight="1"
+        android:background="#fff"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+</TableRow>

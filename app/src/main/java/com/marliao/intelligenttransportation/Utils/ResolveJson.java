@@ -12,6 +12,7 @@ import com.marliao.intelligenttransportation.db.dao.GetLightSenseValue;
 import com.marliao.intelligenttransportation.db.dao.GetParkFree;
 import com.marliao.intelligenttransportation.db.dao.GetParkRate;
 import com.marliao.intelligenttransportation.db.dao.GetRoadStatus;
+import com.marliao.intelligenttransportation.db.dao.GetTrafficLightConfigAction;
 import com.marliao.intelligenttransportation.db.dao.ParkFreeId;
 
 import org.json.JSONArray;
@@ -134,6 +135,27 @@ public class ResolveJson {
     }
 
     /**
+     * 查询红绿灯状态
+     *
+     * @param jsonStr
+     * @param i
+     * @return
+     * @throws JSONException
+     */
+    public static GetTrafficLightConfigAction ResolveGetTrafficLightConfigAction(String jsonStr, int i) throws JSONException {
+        String jsonTokener = JSONTokener(jsonStr);
+        JSONObject jsonObject = new JSONObject(jsonTokener);
+        String serverinfo = jsonObject.getString("serverinfo");
+        JSONObject object = new JSONObject(serverinfo);
+        GetTrafficLightConfigAction getTrafficLightConfigAction = new GetTrafficLightConfigAction();
+        getTrafficLightConfigAction.setYellowTime(object.getInt("YellowTime"));
+        getTrafficLightConfigAction.setGreenTime(object.getInt("GreenTime"));
+        getTrafficLightConfigAction.setRedTime(object.getInt("RedTime"));
+        getTrafficLightConfigAction.setRoadId(i);
+        return getTrafficLightConfigAction;
+    }
+
+    /**
      * 查询当前费率信息
      *
      * @param jsonStr
@@ -176,6 +198,7 @@ public class ResolveJson {
 
     /**
      * 解析公交车距站台的距离
+     *
      * @param jsonStr
      * @return
      */
@@ -184,7 +207,7 @@ public class ResolveJson {
         JSONObject jsonObject = new JSONObject(jsonTokener);
         String serverinfo = jsonObject.getString("serverinfo");
         JSONArray jsonArray = new JSONArray(serverinfo);
-        List<Bus2BusStation> bus2BusStationList=new ArrayList<>();
+        List<Bus2BusStation> bus2BusStationList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             Bus2BusStation bus2BusStation = new Bus2BusStation();
             bus2BusStation.setDistance(jsonArray.getJSONObject(i).getInt("Distance"));

@@ -18,6 +18,7 @@ public class MyApplication extends Application {
     public static final String HTTPGETPARKRATE = "GetParkRate.do";
     public static final String HTTPGETPARKFREE = "GetParkFree.do";
     public static final String HTTPGETBUSSTATIONINFO = "GetBusStationInfo.do";
+    public static final String HTTPGETTRAFFICLIGHTCONFIGACTION = "GetTrafficLightConfigAction.do";
 
     public static Context context;
     public static Toast toast;
