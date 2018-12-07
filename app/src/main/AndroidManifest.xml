@@ -42,7 +42,12 @@
             android:name=".Activity.StopCarActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
-        <activity android:name=".Activity.BusActivity"
+        <activity
+            android:name=".Activity.BusActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".Activity.RoadEnvironmentActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"></activity>
     </application>

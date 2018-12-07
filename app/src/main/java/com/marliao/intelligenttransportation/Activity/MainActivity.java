@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, BusActivity.class));
                 break;
             case R.id.ll_title_road://道路环境
+                startActivity(new Intent(MainActivity.this, RoadEnvironmentActivity.class));
                 break;
             case R.id.tv_setting://设置
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
