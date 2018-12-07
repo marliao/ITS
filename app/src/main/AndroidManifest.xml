@@ -34,6 +34,7 @@
             android:name=".Activity.CarAccountActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
+        <activity android:name=".Activity.RoadStatusActivity"></activity>
     </application>
 
 </manifest>

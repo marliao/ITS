@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    tools:context=".Activity.RoadStatusActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="路面红绿灯信息查询："
+        android:textColor="#000"
+        android:textSize="23sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="排序规则："
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/spinner_sequence"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:padding="5dp" />
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:background="@drawable/selector_btn"
+            android:padding="5dp"
+            android:text="查询"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#000"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:padding="1dp">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_table"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="路口"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_table"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="红灯时长/s"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_table"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="绿灯时长/s"
+                android:textColor="#000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_table"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="黄灯时长/s"
+                android:textColor="#000"
+                android:textSize="18sp" />
+        </TableRow>
+        <ListView
+            android:id="@+id/lv_table_item">
+        </ListView>
+    </TableLayout>
+
+</LinearLayout>
