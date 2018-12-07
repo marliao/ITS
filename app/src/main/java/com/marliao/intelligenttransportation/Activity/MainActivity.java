@@ -170,13 +170,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ll_title_my_car://我的座驾
                 startActivity(new Intent(MainActivity.this, MyCarActivity.class));
                 break;
-            case R.id.ll_title_road://我的路况
+            case R.id.ll_title_road_rate://我的路况
+                startActivity(new Intent(MainActivity.this, RoadStatusActivity.class));
                 break;
             case R.id.ll_title_stop_bus://停车查询
                 break;
             case R.id.ll_title_bus://公交查询
                 break;
-            case R.id.ll_title_road_rate://道路环境
+            case R.id.ll_title_road://道路环境
                 break;
             case R.id.tv_setting://设置
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
