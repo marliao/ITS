@@ -189,6 +189,7 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.tv_account_search_recharge:
+                startActivity(new Intent(MyCarActivity.this,CarAccountActivity.class));
                 break;
         }
     }

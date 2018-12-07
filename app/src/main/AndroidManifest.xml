@@ -27,7 +27,8 @@
         <activity
             android:name=".Activity.MyCarActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".Activity.CarAccountActivity"></activity>
+        <activity android:name=".Activity.CarAccountActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

@@ -120,8 +120,12 @@
                         android:layout_height="wrap_content" />
 
                     <EditText
+                        android:id="@+id/et_account_number"
                         android:layout_width="70dp"
-                        android:layout_height="20dp" />
+                        android:inputType="number"
+                        android:maxLength="4"
+                        android:singleLine="true"
+                        android:layout_height="wrap_content" />
 
                     <Button
                         android:id="@+id/btn_recharge"
