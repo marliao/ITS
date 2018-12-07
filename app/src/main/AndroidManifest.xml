@@ -37,6 +37,10 @@
         <activity
             android:name=".Activity.RoadStatusActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".Activity.StopCarActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"></activity>
     </application>
 

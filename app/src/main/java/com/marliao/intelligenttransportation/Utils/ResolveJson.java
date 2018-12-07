@@ -146,7 +146,7 @@ public class ResolveJson {
         String serverinfo = jsonObject.getString("serverinfo");
         JSONObject object = new JSONObject(serverinfo);
         GetParkRate getParkRate = new GetParkRate();
-        getParkRate.setCount(object.getString("Count"));
+        getParkRate.setCount(object.getString("RateType"));
         getParkRate.setMoney(object.getInt("Money"));
         return getParkRate;
     }

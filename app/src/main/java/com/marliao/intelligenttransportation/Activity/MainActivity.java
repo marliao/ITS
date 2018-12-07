@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, RoadStatusActivity.class));//TODO 没有获取数据的接口，最后再写
                 break;
             case R.id.ll_title_stop_bus://停车查询
+                startActivity(new Intent(MainActivity.this, StopCarActivity.class));
                 break;
             case R.id.ll_title_bus://公交查询
                 break;

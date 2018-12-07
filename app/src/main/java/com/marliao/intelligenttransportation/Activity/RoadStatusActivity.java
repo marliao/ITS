@@ -74,8 +74,9 @@ public class RoadStatusActivity extends AppCompatActivity {
                     }else {
                         http=MyApplication.HTTP;
                     }
+                    String path=http+MyApplication.HTTPGETROADSTATUS;
                     String generateResult = GenerateJsonUtil.GenerateGetRoadStatus(RoadId);
-                    String httpResult = HttpUtil.doPost(http, generateResult);
+                    String httpResult = HttpUtil.doPost(path, generateResult);
                     GetRoadStatus getRoadStatus = ResolveJson.ResolveGetRoadStatus(httpResult);
                     mGetRoadStatusList.add(getRoadStatus);
                     runOnUiThread(new Runnable() {
