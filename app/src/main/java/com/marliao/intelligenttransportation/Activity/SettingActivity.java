@@ -5,12 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.marliao.intelligenttransportation.R;
+import com.marliao.intelligenttransportation.Utils.ConstantValue;
+import com.marliao.intelligenttransportation.Utils.SpUtil;
 import com.marliao.intelligenttransportation.enige.MyApplication;
 
 import java.util.regex.Matcher;
@@ -31,6 +35,15 @@ public class SettingActivity extends AppCompatActivity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         initUI();
+        initEdittext();
+    }
+
+    private void initEdittext() {
+        String[] temp=SpUtil.getString(this,ConstantValue.IPVALUE,"").split("\\.");
+        et_ip1.setHint(temp[0]);
+        et_ip2.setHint(temp[1]);
+        et_ip3.setHint(temp[2]);
+        et_ip4.setHint(temp[3]);
     }
 
     private void initUI() {
@@ -47,6 +60,8 @@ public class SettingActivity extends AppCompatActivity implements TextWatcher {
         btn_determine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SpUtil.putBoolean(SettingActivity.this,ConstantValue.IPSETTING,true);
+                SpUtil.putString(SettingActivity.this,ConstantValue.IPVALUE,iPv4);
                 MyApplication.showToast("IP地址设置成功！");
             }
         });

@@ -32,7 +32,7 @@ public class GenerateJsonUtil {
      * @return
      */
     public static String GenerateSetCarAccountRecharge(Integer CarId,Integer Money){
-        String jsonStr="{\"CarId\":"+CarId+",\"CarAction\":"+Money+"}";
+        String jsonStr="{\"CarId\":"+CarId+",\"Money\":"+Money+"}";
         return jsonStr;
     }
 
@@ -65,6 +65,16 @@ public class GenerateJsonUtil {
     public static String GenerateGetBusStationInfo(Integer BusStationId){
         String jsonStr="{\"BusStationId\":"+BusStationId+"}";
         return jsonStr;
+    }
+
+    /**
+     * 设置中更改IP地址，拼接的http
+     * @param pathStr
+     * @return
+     */
+    public static String GenerateHttp(String pathStr){
+        String path="http://"+pathStr+":8080/transportservice/type/jason/action/";
+        return path;
     }
 
 }

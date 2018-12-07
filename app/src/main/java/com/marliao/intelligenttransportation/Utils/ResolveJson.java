@@ -112,7 +112,7 @@ public class ResolveJson {
         String serverinfo = jsonObject.getString("serverinfo");
         JSONObject object = new JSONObject(serverinfo);
         GetCarAccountBalance getCarAccountBalance = new GetCarAccountBalance();
-        getCarAccountBalance.setBanlance(object.getInt("Banlance"));
+        getCarAccountBalance.setBanlance(object.getInt("Balance"));
         return getCarAccountBalance;
     }
 

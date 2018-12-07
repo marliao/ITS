@@ -81,7 +81,13 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void run() {
                 try {
-                    String path = MyApplication.HTTP + MyApplication.HTTPGETCARSPEED;
+                    String http=null;
+                    if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
+                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
+                    }else {
+                        http=MyApplication.HTTP;
+                    }
+                    String path = http + MyApplication.HTTPGETCARSPEED;
                     String params = GenerateJsonUtil.GenerateSimple(CarId);
                     String getCarSpeedReuslt = HttpUtil.doPost(path, params);
                     final GetCarSpeed getCarSpeed = ResolveJson.ResolveGetCarSpeed(getCarSpeedReuslt);

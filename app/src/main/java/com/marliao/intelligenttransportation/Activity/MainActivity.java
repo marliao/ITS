@@ -15,9 +15,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.marliao.intelligenttransportation.R;
+import com.marliao.intelligenttransportation.Utils.ConstantValue;
 import com.marliao.intelligenttransportation.Utils.GenerateJsonUtil;
 import com.marliao.intelligenttransportation.Utils.HttpUtil;
 import com.marliao.intelligenttransportation.Utils.ResolveJson;
+import com.marliao.intelligenttransportation.Utils.SpUtil;
 import com.marliao.intelligenttransportation.db.dao.Bus2BusStation;
 import com.marliao.intelligenttransportation.db.dao.GetAllSense;
 import com.marliao.intelligenttransportation.enige.MyApplication;
@@ -46,10 +48,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv_pm_tem_co_shidu;
     private TextView tv_bus1;
     private TextView tv_bus2;
-    private Handler mHandler=new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case DATA:
                     Map<Object, Object> mainAllInfo = (Map<Object, Object>) (Map<Object, Object>) msg.obj;
                     //展示数据
@@ -62,18 +64,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showData(Map<Object, Object> mainAllInfo) {
         GetAllSense getAllSense = (GetAllSense) mainAllInfo.get("getAllSense");
-        tv_pm_tem_co_shidu.setText("\nPM2.5："+getAllSense.getPm_2_5()+"μg/m3 \n\n温度："+getAllSense.getTemperature()+"℃ \n\n湿度：" +
-                ""+getAllSense.getHumidity()+"% \n\nCO2："+getAllSense.getCo_2());
+        tv_pm_tem_co_shidu.setText("\nPM2.5：" + getAllSense.getPm_2_5() + "μg/m3 \n\n温度：" + getAllSense.getTemperature() + "℃ \n\n湿度：" +
+                "" + getAllSense.getHumidity() + "% \n\nCO2：" + getAllSense.getCo_2());
         List<Bus2BusStation> busStation1 = (List<Bus2BusStation>) mainAllInfo.get("BusStation1");
-        String station1="\n";
+        String station1 = "\n";
         for (int i = 0; i < busStation1.size(); i++) {
-            station1+=busStation1.get(i).getBusId()+"号公交："+busStation1.get(i).getDistance()+"m \n\n";
+            station1 += busStation1.get(i).getBusId() + "号公交：" + busStation1.get(i).getDistance() + "m \n\n";
         }
         tv_bus1.setText(station1);
         List<Bus2BusStation> busStation2 = (List<Bus2BusStation>) mainAllInfo.get("BusStation2");
-        String station2="\n";
+        String station2 = "\n";
         for (int i = 0; i < busStation2.size(); i++) {
-            station2+=busStation2.get(i).getBusId()+"号公交："+busStation2.get(i).getDistance()+"m \n\n";
+            station2 += busStation2.get(i).getBusId() + "号公交：" + busStation2.get(i).getDistance() + "m \n\n";
         }
         tv_bus2.setText(station2);
     }
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initUI();
         //设置定时器,true，程序结束，timer就结束
         Timer timer = new Timer(true);
-        TimerTask timerTask=new TimerTask() {
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 //拿取数据
@@ -93,32 +95,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         //delay为long,period为long：从现在起过delay毫秒以后，每隔period毫秒执行一次。
-        timer.schedule(timerTask,0,5000);
+        timer.schedule(timerTask, 0, 5000);
     }
 
     private void initData() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
-                    String allSense=MyApplication.HTTP+MyApplication.HTTPGETALLSENSE;
+                    String http = null;
+                    if (SpUtil.getBoolean(MainActivity.this, ConstantValue.IPSETTING, false)) {
+                        String string = SpUtil.getString(MainActivity.this, ConstantValue.IPVALUE, "");
+                        http = GenerateJsonUtil.GenerateHttp(string);
+                    } else {
+                        http = MyApplication.HTTP;
+                    }
+
+                    String allSense = http + MyApplication.HTTPGETALLSENSE;
                     String sllSenseResult = HttpUtil.doPost(allSense, null);
                     GetAllSense getAllSense = ResolveJson.ResolveGetAllSense(sllSenseResult);
 
-                    String busStationInfo=MyApplication.HTTP+MyApplication.HTTPGETBUSSTATIONINFO;
+                    String busStationInfo = http + MyApplication.HTTPGETBUSSTATIONINFO;
                     String busStationInfoResult1 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(1));
                     List<Bus2BusStation> bus2BusStationList1 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult1);
                     String busStationInfoResult2 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(2));
                     List<Bus2BusStation> bus2BusStationList2 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult2);
 
-                    Map<Object,Object> mainAllInfo=new HashMap<>();
-                    mainAllInfo.put("getAllSense",getAllSense);
-                    mainAllInfo.put("BusStation1",bus2BusStationList1);
-                    mainAllInfo.put("BusStation2",bus2BusStationList2);
+                    Map<Object, Object> mainAllInfo = new HashMap<>();
+                    mainAllInfo.put("getAllSense", getAllSense);
+                    mainAllInfo.put("BusStation1", bus2BusStationList1);
+                    mainAllInfo.put("BusStation2", bus2BusStationList2);
 
                     Message msg = Message.obtain();
-                    msg.what=DATA;
-                    msg.obj=mainAllInfo;
+                    msg.what = DATA;
+                    msg.obj = mainAllInfo;
                     mHandler.sendMessage(msg);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -158,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_title_my_car://我的座驾
-                startActivity(new Intent(MainActivity.this,MyCarActivity.class));
+                startActivity(new Intent(MainActivity.this, MyCarActivity.class));
                 break;
             case R.id.ll_title_road://我的路况
                 break;
@@ -169,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ll_title_road_rate://道路环境
                 break;
             case R.id.tv_setting://设置
-                startActivity(new Intent(MainActivity.this,SettingActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
                 break;
             case R.id.iv_menu://侧滑栏
                 if (drawer_layout.isDrawerOpen(nav_view)) {

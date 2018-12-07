@@ -122,10 +122,11 @@
                     <EditText
                         android:id="@+id/et_account_number"
                         android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:inputType="number"
                         android:maxLength="4"
-                        android:singleLine="true"
-                        android:layout_height="wrap_content" />
+                        android:singleLine="true" />
 
                     <Button
                         android:id="@+id/btn_recharge"
@@ -133,7 +134,7 @@
                         android:layout_height="25dp"
                         android:layout_marginLeft="20dp"
                         android:background="@drawable/selector_btn"
-                        android:text="查询" />
+                        android:text="充值" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
