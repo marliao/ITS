@@ -48,14 +48,13 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="15dp"
         android:background="#000"
         android:stretchColumns="*">
 
-        <TableRow
-            android:padding="1dp">
+        <TableRow android:padding="1dp">
 
             <TextView
                 android:layout_width="80dp"
@@ -97,9 +96,12 @@
                 android:textColor="#000"
                 android:textSize="18sp" />
         </TableRow>
+
         <ListView
-            android:id="@+id/lv_table_item">
-        </ListView>
+            android:id="@+id/lv_table_item"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingBottom="1dp"></ListView>
     </TableLayout>
 
 </LinearLayout>
