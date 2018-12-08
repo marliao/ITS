@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.marliao.intelligenttransportation.R;
@@ -111,7 +112,7 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                         }
                     });
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    initData(CarId);
                 }
                 super.run();
             }

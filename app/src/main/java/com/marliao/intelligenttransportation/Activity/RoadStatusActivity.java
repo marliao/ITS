@@ -40,7 +40,6 @@ public class RoadStatusActivity extends AppCompatActivity {
     private List<GetRoadStatus> mGetRoadStatusList;
     private List<String> collationlist;
     private List<String> mCollationlist1;
-    private String mItemSelected;
     private List<GetTrafficLightConfigAction> mGetTrafficLightConfigActionList;
     private TableAdapter mTableAdapter;
 
@@ -56,43 +55,50 @@ public class RoadStatusActivity extends AppCompatActivity {
         spinnerSequence.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mItemSelected = mCollationlist1.get(position);
+                String itemSelected = mCollationlist1.get(position);
+                clickToSort(itemSelected);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void clickToSort(final String itemSelected) {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //点击按指定规则排序
-                if (mItemSelected.equals("红灯降序")) {
+                if (itemSelected.equals("红灯降序")) {
                     Sequence.redLightDescending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("绿灯降序")) {
+                } else if (itemSelected.equals("绿灯降序")) {
                     Sequence.greenLightDescending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("黄灯降序")) {
+                } else if (itemSelected.equals("黄灯降序")) {
                     Sequence.yellowLightDescending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("路口降序")) {
+                } else if (itemSelected.equals("路口降序")) {
                     Sequence.roadDescending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("绿灯升序")) {
+                } else if (itemSelected.equals("绿灯升序")) {
                     Sequence.greenLightAscending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("黄灯升序")) {
+                } else if (itemSelected.equals("黄灯升序")) {
                     Sequence.yellowLightAscending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("路口升序")) {
+                } else if (itemSelected.equals("路口升序")) {
                     Sequence.roadLightAscending(mGetTrafficLightConfigActionList);
-                } else if (mItemSelected.equals("红灯升序")) {
+                    showList(mGetTrafficLightConfigActionList);
+                } else if (itemSelected.equals("红灯升序")) {
                     Sequence.redLightAscending(mGetTrafficLightConfigActionList);
                 }
                 if (mTableAdapter != null) {
                     mTableAdapter.notifyDataSetChanged();
                 }
-                for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
-                    Log.i("+++++", String.valueOf(mGetTrafficLightConfigActionList.get(i).getRoadId()));
-                }
             }
         });
+    }
 
+    public void showList(List<GetTrafficLightConfigAction> mGetTrafficLightConfigActionList){
+        for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
+            Log.i("+++", String.valueOf(mGetTrafficLightConfigActionList.get(i).getRoadId()));
+        }
     }
 
 
@@ -120,16 +126,13 @@ public class RoadStatusActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mTableAdapter != null) {
-                                mTableAdapter.notifyDataSetChanged();
-                            }
                             //准备数据适配器
                             mTableAdapter = new TableAdapter(mGetTrafficLightConfigActionList);
                             lvTableItem.setAdapter(mTableAdapter);
                         }
                     });
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    tabularData();
                 }
                 super.run();
             }
@@ -139,12 +142,12 @@ public class RoadStatusActivity extends AppCompatActivity {
     private void setSpinnerData() {
         mCollationlist1 = new ArrayList<>();
         mCollationlist1.add("红灯升序");
-        mCollationlist1.add("绿灯升序");
-        mCollationlist1.add("黄灯升序");
-        mCollationlist1.add("路口升序");
         mCollationlist1.add("红灯降序");
+        mCollationlist1.add("绿灯升序");
         mCollationlist1.add("绿灯降序");
+        mCollationlist1.add("黄灯升序");
         mCollationlist1.add("黄灯降序");
+        mCollationlist1.add("路口升序");
         mCollationlist1.add("路口降序");
         SpinnerAdapter spinnerAdapter = new SpinnerAdapter(mCollationlist1);
         spinnerSequence.setAdapter(spinnerAdapter);
