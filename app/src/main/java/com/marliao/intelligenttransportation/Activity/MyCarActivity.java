@@ -49,30 +49,30 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
         boolean mycar1 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR1, false);
         if (mycar1) {
             initData(1);
-            ivButton1.setBackgroundResource(R.drawable.start);
+            ivButton1.setBackgroundResource(R.drawable.stop);
         } else {
-            tvMyCar1.setText("0km/h");
+            tvMyCar1.setText("停止");
         }
         boolean mycar2 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR2, false);
         if (mycar2) {
             initData(2);
-            ivButton2.setBackgroundResource(R.drawable.start);
+            ivButton2.setBackgroundResource(R.drawable.stop);
         } else {
-            tvMyCar2.setText("0km/h");
+            tvMyCar2.setText("停止");
         }
         boolean mycar3 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR3, false);
         if (mycar3) {
             initData(3);
-            ivButton3.setBackgroundResource(R.drawable.start);
+            ivButton3.setBackgroundResource(R.drawable.stop);
         } else {
-            tvMyCar3.setText("0km/h");
+            tvMyCar3.setText("停止");
         }
         boolean mycar4 = SpUtil.getBoolean(this, ConstantValue.START_STOP_CAR4, false);
         if (mycar4) {
             initData(4);
-            ivButton4.setBackgroundResource(R.drawable.start);
+            ivButton4.setBackgroundResource(R.drawable.stop);
         } else {
-            tvMyCar4.setText("0km/h");
+            tvMyCar4.setText("停止");
         }
     }
 
@@ -151,11 +151,13 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 if (!car1) {
                     initData(1);
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, true);
-                    ivButton1.setBackgroundResource(R.drawable.start);
+                    ivButton1.setBackgroundResource(R.drawable.stop);
+                    setCarAction(1,"Start");
                 } else {
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR1, false);
-                    ivButton1.setBackgroundResource(R.drawable.stop);
-                    tvMyCar1.setText("0km/h");
+                    ivButton1.setBackgroundResource(R.drawable.start);
+                    tvMyCar1.setText("停止");
+                    setCarAction(1,"Stop");
                 }
                 break;
             case R.id.iv_button2:
@@ -163,11 +165,13 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 if (!car2) {
                     initData(2);
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, true);
-                    ivButton2.setBackgroundResource(R.drawable.start);
+                    ivButton2.setBackgroundResource(R.drawable.stop);
+                    setCarAction(2,"Start");
                 } else {
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR2, false);
-                    ivButton2.setBackgroundResource(R.drawable.stop);
-                    tvMyCar2.setText("0km/h");
+                    ivButton2.setBackgroundResource(R.drawable.start);
+                    tvMyCar2.setText("停止");
+                    setCarAction(2,"Stop");
                 }
                 break;
             case R.id.iv_button3:
@@ -175,11 +179,13 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 if (!car3) {
                     initData(3);
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, true);
-                    ivButton3.setBackgroundResource(R.drawable.start);
+                    ivButton3.setBackgroundResource(R.drawable.stop);
+                    setCarAction(3,"Start");
                 } else {
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR3, false);
-                    ivButton3.setBackgroundResource(R.drawable.stop);
-                    tvMyCar3.setText("0km/h");
+                    ivButton3.setBackgroundResource(R.drawable.start);
+                    tvMyCar3.setText("停止");
+                    setCarAction(3,"Stop");
                 }
                 break;
             case R.id.iv_button4:
@@ -187,16 +193,49 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
                 if (!car4) {
                     initData(4);
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, true);
-                    ivButton4.setBackgroundResource(R.drawable.start);
+                    ivButton4.setBackgroundResource(R.drawable.stop);
+                    setCarAction(4,"Start");
                 } else {
                     SpUtil.putBoolean(MyCarActivity.this, ConstantValue.START_STOP_CAR4, false);
-                    ivButton4.setBackgroundResource(R.drawable.stop);
-                    tvMyCar4.setText("0km/h");
+                    ivButton4.setBackgroundResource(R.drawable.start);
+                    tvMyCar4.setText("停止");
+                    setCarAction(4,"Stop");
                 }
                 break;
             case R.id.tv_account_search_recharge:
                 startActivity(new Intent(MyCarActivity.this,CarAccountActivity.class));
                 break;
         }
+    }
+
+    private void setCarAction(final int CarId, final String CarAction) {
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    String http=null;
+                    if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
+                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
+                    }else {
+                        http=MyApplication.HTTP;
+                    }
+                    String path = http + MyApplication.HTTPSETCARMOVE;
+                    String generateResult = GenerateJsonUtil.GenerateSetCarMove(CarId, CarAction);
+                    String httpResult = HttpUtil.doPost(path, generateResult);
+                    final String result = ResolveJson.ResolveSimple(httpResult);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!result.equals("ok")) {
+                                MyApplication.showToast("服务器连接失败！");
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                super.run();
+            }
+        }.start();
     }
 }

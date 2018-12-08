@@ -27,6 +27,18 @@ public class BusActivity extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus);
         initUI();
+        defaultInterface();
+    }
+
+    private void defaultInterface() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction beginTransaction = fragmentManager.beginTransaction();
+        beginTransaction.replace(R.id.ll_layout,new BusStation1Fragment());
+        btnBusStation1.setBackgroundResource(R.drawable.bus_pressed);
+        btnBusStation1.setTextColor(Color.WHITE);
+        btnBusStation2.setBackgroundResource(R.drawable.bus_unpressed);
+        btnBusStation2.setTextColor(Color.BLACK);
+        beginTransaction.commit();
     }
 
     private void initUI() {

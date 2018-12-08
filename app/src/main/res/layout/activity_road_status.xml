@@ -16,7 +16,7 @@
             android:id="@+id/iv_return_activity"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:src="@drawable/returnactivity" />
 
         <TextView
@@ -74,7 +74,7 @@
         android:background="#000"
         android:stretchColumns="*">
 
-        <TableRow android:padding="1dp">
+        <TableRow android:padding="0.5dp">
 
             <TextView
                 android:layout_width="80dp"
@@ -118,7 +118,8 @@
         </TableRow>
 
         <ListView
-            android:id="@+id/lv_table_item"></ListView>
+            android:id="@+id/lv_table_item"
+            android:paddingBottom="0.5dp"></ListView>
     </TableLayout>
 
 </LinearLayout>

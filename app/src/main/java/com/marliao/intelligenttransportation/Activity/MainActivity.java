@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.handleMessage(msg);
         }
     };
+    private Timer mTimer;
+    private TimerTask mTimerTask;
 
     private void showData(Map<Object, Object> mainAllInfo) {
         GetAllSense getAllSense = (GetAllSense) mainAllInfo.get("getAllSense");
@@ -85,57 +87,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
-        //设置定时器,true，程序结束，timer就结束
-        Timer timer = new Timer(true);
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                //拿取数据
-                initData();
-            }
-        };
-        //delay为long,period为long：从现在起过delay毫秒以后，每隔period毫秒执行一次。
-        timer.schedule(timerTask, 0, 5000);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopTimer();
+    }
+
+    private void startTimer() {
+        if (mTimer == null) {
+            mTimer = new Timer();
+        }
+        if (mTimerTask == null) {
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    //拿取数据
+                    initData();
+                }
+            };
+        }
+        if (mTimer != null && mTimerTask != null) {
+            mTimer.schedule(mTimerTask, 0, 5000);
+        }
+    }
+
+    private void stopTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+        if (mTimerTask != null) {
+            mTimerTask.cancel();
+            mTimerTask = null;
+        }
     }
 
     private void initData() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    String http = null;
-                    if (SpUtil.getBoolean(MainActivity.this, ConstantValue.IPSETTING, false)) {
-                        String string = SpUtil.getString(MainActivity.this, ConstantValue.IPVALUE, "");
-                        http = GenerateJsonUtil.GenerateHttp(string);
-                    } else {
-                        http = MyApplication.HTTP;
-                    }
-
-                    String allSense = http + MyApplication.HTTPGETALLSENSE;
-                    String sllSenseResult = HttpUtil.doPost(allSense, null);
-                    GetAllSense getAllSense = ResolveJson.ResolveGetAllSense(sllSenseResult);
-
-                    String busStationInfo = http + MyApplication.HTTPGETBUSSTATIONINFO;
-                    String busStationInfoResult1 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(1));
-                    List<Bus2BusStation> bus2BusStationList1 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult1);
-                    String busStationInfoResult2 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(2));
-                    List<Bus2BusStation> bus2BusStationList2 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult2);
-
-                    Map<Object, Object> mainAllInfo = new HashMap<>();
-                    mainAllInfo.put("getAllSense", getAllSense);
-                    mainAllInfo.put("BusStation1", bus2BusStationList1);
-                    mainAllInfo.put("BusStation2", bus2BusStationList2);
-
-                    Message msg = Message.obtain();
-                    msg.what = DATA;
-                    msg.obj = mainAllInfo;
-                    mHandler.sendMessage(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                super.run();
+        try {
+            String http = null;
+            if (SpUtil.getBoolean(MainActivity.this, ConstantValue.IPSETTING, false)) {
+                String string = SpUtil.getString(MainActivity.this, ConstantValue.IPVALUE, "");
+                http = GenerateJsonUtil.GenerateHttp(string);
+            } else {
+                http = MyApplication.HTTP;
             }
-        }.start();
+
+            String allSense = http + MyApplication.HTTPGETALLSENSE;
+            String sllSenseResult = HttpUtil.doPost(allSense, null);
+            GetAllSense getAllSense = ResolveJson.ResolveGetAllSense(sllSenseResult);
+
+            String busStationInfo = http + MyApplication.HTTPGETBUSSTATIONINFO;
+            String busStationInfoResult1 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(1));
+            List<Bus2BusStation> bus2BusStationList1 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult1);
+            String busStationInfoResult2 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(2));
+            List<Bus2BusStation> bus2BusStationList2 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult2);
+
+            Map<Object, Object> mainAllInfo = new HashMap<>();
+            mainAllInfo.put("getAllSense", getAllSense);
+            mainAllInfo.put("BusStation1", bus2BusStationList1);
+            mainAllInfo.put("BusStation2", bus2BusStationList2);
+
+            Message msg = Message.obtain();
+            msg.what = DATA;
+            msg.obj = mainAllInfo;
+            mHandler.sendMessage(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initUI() {
@@ -169,9 +195,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.ll_title_my_car://我的座驾
                 startActivity(new Intent(MainActivity.this, MyCarActivity.class));
+                stopTimer();
                 break;
             case R.id.ll_title_road_rate://我的路况
-                startActivity(new Intent(MainActivity.this, RoadStatusActivity.class));//TODO 没有获取数据的接口，最后再写
+                startActivity(new Intent(MainActivity.this, RoadStatusActivity.class));
                 break;
             case R.id.ll_title_stop_bus://停车查询
                 startActivity(new Intent(MainActivity.this, StopCarActivity.class));

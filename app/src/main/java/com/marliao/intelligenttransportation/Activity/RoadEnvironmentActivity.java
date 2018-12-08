@@ -24,7 +24,6 @@ import com.marliao.intelligenttransportation.enige.MyApplication;
 
 import org.json.JSONException;
 
-import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,7 +47,7 @@ public class RoadEnvironmentActivity extends AppCompatActivity {
                     tvPmTemCoShidu.setText("PM2.5：" + getAllSense.getPm_2_5() + "μg/m3 ,温度：" + getAllSense.getTemperature() + "℃ ,湿度：" +
                             "" + getAllSense.getHumidity() + "% ,CO2：" + getAllSense.getCo_2());
                     if (getAllSense.getPm_2_5() > 200 || getAllSense.getTemperature() > 40 || getAllSense.getTemperature() < 10 || getAllSense.getHumidity() > 50 || getAllSense.getHumidity() < 0) {
-                        vvAlarming.setVideoURI(Uri.parse("android.resource://"+getPackageName()+"/raw/alarming"));
+                        vvAlarming.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/alarming"));
                         vvAlarming.start();
                         vvAlarming.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
@@ -69,7 +68,7 @@ public class RoadEnvironmentActivity extends AppCompatActivity {
                     tvLightStrength.setText("光照强度：" + lightIntensity + " Lux");
                     if (lightIntensity > 2500 || lightIntensity < 1000) {
                         tvWarningInformationLight.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         tvWarningInformationLight.setVisibility(View.INVISIBLE);
                     }
                     break;
@@ -77,31 +76,40 @@ public class RoadEnvironmentActivity extends AppCompatActivity {
             super.handleMessage(msg);
         }
     };
+    private Timer mTimerLight;
+    private TimerTask mTimerTaskLight;
+    private Timer mTimerAir;
+    private TimerTask mTimerTaskAir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_road_environment);
         initUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btnSearchLightIntensity.setEnabled(true);
+        btnSearchAirQuality.setEnabled(true);
         airQuality();//空气质量
         lightIntensity();//光照强度
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopTimerAir();
+        stopTimerLight();
     }
 
     private void lightIntensity() {
         btnSearchLightIntensity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //设置定时器,true，程序结束，timer就结束
-                Timer timer = new Timer(true);
-                TimerTask timerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        //拿取数据
-                        initLightIntensityData();
-                    }
-                };
-                //delay为long,period为long：从现在起过delay毫秒以后，每隔period毫秒执行一次。
-                timer.schedule(timerTask, 0, 10000);
+                startTimerLight();
+                btnSearchLightIntensity.setEnabled(false);
             }
         });
     }
@@ -139,17 +147,8 @@ public class RoadEnvironmentActivity extends AppCompatActivity {
         btnSearchAirQuality.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //设置定时器,true，程序结束，timer就结束
-                Timer timer = new Timer(true);
-                TimerTask timerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        //拿取数据
-                        initairQualityData();
-                    }
-                };
-                //delay为long,period为long：从现在起过delay毫秒以后，每隔period毫秒执行一次。
-                timer.schedule(timerTask, 0, 10000);
+                startTimerAir();
+                btnSearchAirQuality.setEnabled(false);
             }
         });
     }
@@ -198,6 +197,61 @@ public class RoadEnvironmentActivity extends AppCompatActivity {
         btnSearchLightIntensity = (Button) findViewById(R.id.btn_search_light_intensity);
         tvLightStrength = (TextView) findViewById(R.id.tv_light_strength);
         tvWarningInformationLight = (TextView) findViewById(R.id.tv_warning_information_light);
+    }
 
+    private void startTimerLight() {
+        if (mTimerLight == null) {
+            mTimerLight = new Timer();
+        }
+        if (mTimerTaskLight == null) {
+            mTimerTaskLight = new TimerTask() {
+                @Override
+                public void run() {
+                    initLightIntensityData();
+                }
+            };
+        }
+        if (mTimerLight != null && mTimerTaskLight != null) {
+            mTimerLight.schedule(mTimerTaskLight, 0, 10000);
+        }
+    }
+
+    private void stopTimerLight() {
+        if (mTimerLight != null) {
+            mTimerLight.cancel();
+            mTimerLight = null;
+        }
+        if (mTimerTaskLight != null) {
+            mTimerTaskLight.cancel();
+            mTimerTaskLight = null;
+        }
+    }
+
+    private void startTimerAir() {
+        if (mTimerAir == null) {
+            mTimerAir = new Timer();
+        }
+        if (mTimerTaskAir == null) {
+            mTimerTaskAir = new TimerTask() {
+                @Override
+                public void run() {
+                    initairQualityData();
+                }
+            };
+        }
+        if (mTimerAir != null && mTimerTaskAir != null) {
+            mTimerAir.schedule(mTimerTaskAir, 0, 10000);
+        }
+    }
+
+    private void stopTimerAir() {
+        if (mTimerAir != null) {
+            mTimerAir.cancel();
+            mTimerAir = null;
+        }
+        if (mTimerTaskAir != null) {
+            mTimerTaskAir.cancel();
+            mTimerTaskAir = null;
+        }
     }
 }

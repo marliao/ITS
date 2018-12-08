@@ -15,7 +15,7 @@
             android:id="@+id/iv_return_activity"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:src="@drawable/returnactivity" />
 
         <TextView
@@ -61,7 +61,7 @@
                     android:layout_width="70dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/stop"/>
+                    android:background="@drawable/start"/>
             </LinearLayout>
 
             <LinearLayout
@@ -88,7 +88,7 @@
                     android:layout_width="70dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/stop"/>
+                    android:background="@drawable/start"/>
             </LinearLayout>
 
             <LinearLayout
@@ -115,7 +115,7 @@
                     android:layout_width="70dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/stop"/>
+                    android:background="@drawable/start"/>
             </LinearLayout>
 
             <LinearLayout
@@ -142,7 +142,7 @@
                     android:layout_width="70dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/stop"/>
+                    android:background="@drawable/start"/>
             </LinearLayout>
         </LinearLayout>
 

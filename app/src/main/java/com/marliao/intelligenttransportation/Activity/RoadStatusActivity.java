@@ -21,6 +21,7 @@ import com.marliao.intelligenttransportation.Utils.ConstantValue;
 import com.marliao.intelligenttransportation.Utils.GenerateJsonUtil;
 import com.marliao.intelligenttransportation.Utils.HttpUtil;
 import com.marliao.intelligenttransportation.Utils.ResolveJson;
+import com.marliao.intelligenttransportation.Utils.Sequence;
 import com.marliao.intelligenttransportation.Utils.SpUtil;
 import com.marliao.intelligenttransportation.db.dao.GetRoadStatus;
 import com.marliao.intelligenttransportation.db.dao.GetTrafficLightConfigAction;
@@ -37,13 +38,6 @@ public class RoadStatusActivity extends AppCompatActivity {
     private ListView lvTableItem;
     private ImageView ivReturnActivity;
     private List<GetRoadStatus> mGetRoadStatusList;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            //
-            super.handleMessage(msg);
-        }
-    };
     private List<String> collationlist;
     private List<String> mCollationlist1;
     private String mItemSelected;
@@ -74,96 +68,61 @@ public class RoadStatusActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //点击按指定规则排序
                 if (mItemSelected.equals("红灯降序")) {
-                    redLightDescending();
-                }else if (mItemSelected.equals("绿灯降序")){
-                    greenLightDescending();
+                    Sequence.redLightDescending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("绿灯降序")) {
+                    Sequence.greenLightDescending(mGetTrafficLightConfigActionList);
                 } else if (mItemSelected.equals("黄灯降序")) {
-                    yellowLightDescending();
+                    Sequence.yellowLightDescending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("路口降序")) {
+                    Sequence.roadDescending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("绿灯升序")) {
+                    Sequence.greenLightAscending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("黄灯升序")) {
+                    Sequence.yellowLightAscending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("路口升序")) {
+                    Sequence.roadLightAscending(mGetTrafficLightConfigActionList);
+                } else if (mItemSelected.equals("红灯升序")) {
+                    Sequence.redLightAscending(mGetTrafficLightConfigActionList);
+                }
+                if (mTableAdapter != null) {
+                    mTableAdapter.notifyDataSetChanged();
+                }
+                for (int i = 0; i < mGetTrafficLightConfigActionList.size(); i++) {
+                    Log.i("+++++", String.valueOf(mGetTrafficLightConfigActionList.get(i).getRoadId()));
                 }
             }
         });
+
     }
 
-    /**
-     * 黄灯降序
-     */
-    private void yellowLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
-                if (mGetTrafficLightConfigActionList.get(j).getYellowTime() < mGetTrafficLightConfigActionList.get(j + 1).getYellowTime()) {
-                    GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
-                    getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
-                    mGetTrafficLightConfigActionList.remove(j);
-                    mGetTrafficLightConfigActionList.add(j,mGetTrafficLightConfigActionList.get(j+1));
-                    mGetTrafficLightConfigActionList.remove(j+1);
-                    mGetTrafficLightConfigActionList.add(j+1,getTrafficLightConfigAction);
-                }
-            }
-        }
-    }
-
-    /**
-     * 绿灯降序
-     */
-    private void greenLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
-                if (mGetTrafficLightConfigActionList.get(j).getGreenTime() < mGetTrafficLightConfigActionList.get(j + 1).getGreenTime()) {
-                    GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
-                    getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
-                    mGetTrafficLightConfigActionList.remove(j);
-                    mGetTrafficLightConfigActionList.add(j,mGetTrafficLightConfigActionList.get(j+1));
-                    mGetTrafficLightConfigActionList.remove(j+1);
-                    mGetTrafficLightConfigActionList.add(j+1,getTrafficLightConfigAction);
-                }
-            }
-        }
-    }
-
-    /**
-     * 红灯降序
-     */
-    private void redLightDescending() {
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
-                if (mGetTrafficLightConfigActionList.get(j).getRedTime() < mGetTrafficLightConfigActionList.get(j + 1).getRedTime()) {
-                    GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
-                    getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
-                    mGetTrafficLightConfigActionList.remove(j);
-                    mGetTrafficLightConfigActionList.add(j,mGetTrafficLightConfigActionList.get(j+1));
-                    mGetTrafficLightConfigActionList.remove(j+1);
-                    mGetTrafficLightConfigActionList.add(j+1,getTrafficLightConfigAction);
-                }
-            }
-        }
-    }
 
     private void tabularData() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
-                    String http=null;
+                    String http = null;
                     if (SpUtil.getBoolean(RoadStatusActivity.this, ConstantValue.IPSETTING, false)) {
-                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(RoadStatusActivity.this,ConstantValue.IPVALUE,""));
-                    }else {
-                        http=MyApplication.HTTP;
+                        http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(RoadStatusActivity.this, ConstantValue.IPVALUE, ""));
+                    } else {
+                        http = MyApplication.HTTP;
                     }
                     String path = http + MyApplication.HTTPGETTRAFFICLIGHTCONFIGACTION;
                     mGetTrafficLightConfigActionList = new ArrayList<>();
-                    for (int i=1;i<6;i++){
+                    for (int i = 1; i < 6; i++) {
                         String generateResult = GenerateJsonUtil.GenerateGetTrafficLightConfigAction(i);
                         String httpResult = HttpUtil.doPost(path, generateResult);
-                        Log.i("********",httpResult);
-                        GetTrafficLightConfigAction getTrafficLightConfigAction = ResolveJson.ResolveGetTrafficLightConfigAction(httpResult,i);
+                        GetTrafficLightConfigAction getTrafficLightConfigAction = ResolveJson.ResolveGetTrafficLightConfigAction(httpResult, i);
                         mGetTrafficLightConfigActionList.add(getTrafficLightConfigAction);
                     }
                     //默认按红灯时长升序排列
-                    Log.i("**********",mGetTrafficLightConfigActionList.get(0).getRedTime().toString());
-                    redLightAscending(mGetTrafficLightConfigActionList);
+                    Sequence.redLightAscending(mGetTrafficLightConfigActionList);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (mTableAdapter != null) {
+                                mTableAdapter.notifyDataSetChanged();
+                            }
                             //准备数据适配器
                             mTableAdapter = new TableAdapter(mGetTrafficLightConfigActionList);
                             lvTableItem.setAdapter(mTableAdapter);
@@ -177,31 +136,16 @@ public class RoadStatusActivity extends AppCompatActivity {
         }.start();
     }
 
-    /**
-     * 红灯升序
-     * @param mGetTrafficLightConfigActionList
-     */
-    private void redLightAscending(List<GetTrafficLightConfigAction> mGetTrafficLightConfigActionList) {
-        List<GetTrafficLightConfigAction> getTrafficLightConfigActionList=new ArrayList<>();
-        for (int i = 0; i < mGetTrafficLightConfigActionList.size()-1; i++) {
-            for (int j = 0; j < mGetTrafficLightConfigActionList.size()-1-i; j++) {
-                if (mGetTrafficLightConfigActionList.get(j).getRedTime() > mGetTrafficLightConfigActionList.get(j).getRedTime()) {
-                    GetTrafficLightConfigAction getTrafficLightConfigAction=new GetTrafficLightConfigAction();
-                    getTrafficLightConfigAction=mGetTrafficLightConfigActionList.get(j);
-                    mGetTrafficLightConfigActionList.remove(j);
-                    mGetTrafficLightConfigActionList.add(j,mGetTrafficLightConfigActionList.get(j+1));
-                    mGetTrafficLightConfigActionList.remove(j+1);
-                    mGetTrafficLightConfigActionList.add(j+1,getTrafficLightConfigAction);
-                }
-            }
-        }
-    }
-
     private void setSpinnerData() {
         mCollationlist1 = new ArrayList<>();
+        mCollationlist1.add("红灯升序");
+        mCollationlist1.add("绿灯升序");
+        mCollationlist1.add("黄灯升序");
+        mCollationlist1.add("路口升序");
         mCollationlist1.add("红灯降序");
         mCollationlist1.add("绿灯降序");
         mCollationlist1.add("黄灯降序");
+        mCollationlist1.add("路口降序");
         SpinnerAdapter spinnerAdapter = new SpinnerAdapter(mCollationlist1);
         spinnerSequence.setAdapter(spinnerAdapter);
     }
@@ -245,8 +189,9 @@ public class RoadStatusActivity extends AppCompatActivity {
 
     public class TableAdapter extends BaseAdapter {
         List<GetTrafficLightConfigAction> getTrafficLightConfigActionList;
+
         public TableAdapter(List<GetTrafficLightConfigAction> mGetTrafficLightConfigActionList) {
-            this.getTrafficLightConfigActionList=mGetTrafficLightConfigActionList;
+            this.getTrafficLightConfigActionList = mGetTrafficLightConfigActionList;
         }
 
         @Override
@@ -268,19 +213,19 @@ public class RoadStatusActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder = new ViewHolder();
             if (convertView == null) {
-                convertView=View.inflate(RoadStatusActivity.this,R.layout.table_light_item,null);
+                convertView = View.inflate(RoadStatusActivity.this, R.layout.table_light_item, null);
                 viewHolder.tvRoadId = (TextView) convertView.findViewById(R.id.tv_road_id);
                 viewHolder.tvRedLight = (TextView) convertView.findViewById(R.id.tv_red_light);
                 viewHolder.tvGreenLight = (TextView) convertView.findViewById(R.id.tv_green_light);
                 viewHolder.tvYellowLight = (TextView) convertView.findViewById(R.id.tv_yellow_light);
                 convertView.setTag(viewHolder);
-            }else {
-                viewHolder= (ViewHolder) convertView.getTag();
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
-            viewHolder.tvRoadId.setText(getItem(position).getRoadId()+"号路口");
-            viewHolder.tvRedLight.setText(getItem(position).getRedTime()+"");
-            viewHolder.tvGreenLight.setText(getItem(position).getGreenTime()+"");
-            viewHolder.tvYellowLight.setText(getItem(position).getYellowTime()+"");
+            viewHolder.tvRoadId.setText(getItem(position).getRoadId() + "号路口");
+            viewHolder.tvRedLight.setText(getItem(position).getRedTime() + "");
+            viewHolder.tvGreenLight.setText(getItem(position).getGreenTime() + "");
+            viewHolder.tvYellowLight.setText(getItem(position).getYellowTime() + "");
             return convertView;
         }
     }
