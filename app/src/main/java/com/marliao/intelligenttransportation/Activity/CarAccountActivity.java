@@ -51,6 +51,10 @@ public class CarAccountActivity extends AppCompatActivity {
     private Spinner spinnerRecharge;
     private Button btnRecharge;
     private EditText etAccountNumber;
+    private TextView tvTimeRecharge;
+    private Button btnCancel;
+    private Button btnIgnore;
+    private Button btnDetermine;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -61,10 +65,10 @@ public class CarAccountActivity extends AppCompatActivity {
                     break;
                 case SETCATACCOUNT:
                     String result = (String) msg.obj;
-                    Log.i("*result",result);
-                    if (result.equals("ok")){
+                    Log.i("*result", result);
+                    if (result.equals("ok")) {
                         MyApplication.showToast("充值成功！");
-                    }else {
+                    } else {
                         MyApplication.showToast("充值失败，请稍后重试！");
                     }
                     break;
@@ -74,7 +78,7 @@ public class CarAccountActivity extends AppCompatActivity {
     };
 
     /**
-     *  @param carId
+     * @param carId
      * @param account
      */
     private void showRechargeAccount(final Integer carId, final String account) {
@@ -82,8 +86,54 @@ public class CarAccountActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd/ HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
         //对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.styletest);//TODO 背景透明了，需要半透明
-        builder.setIcon(R.drawable.rmb);
+        View view = View.inflate(this, R.layout.dialog_myself, null);
+        tvTimeRecharge = (TextView) view.findViewById(R.id.tv_time_recharge);
+        btnCancel = (Button) view.findViewById(R.id.btn_cancel);
+        btnIgnore = (Button) view.findViewById(R.id.btn_ignore);
+        btnDetermine = (Button) view.findViewById(R.id.btn_determine);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.NoBackGroundDialog);
+        final AlertDialog dialog = builder.create();
+        dialog.setView(view);
+        dialog.show();
+        tvTimeRecharge.setText("在" + simpleDateFormat.format(date) + " 将要给" + carId + "号小车充值" + account + "元");
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnIgnore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnDetermine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            searchAccount(carId, account);
+                        } catch (JSONException e) {
+                            try {
+                                searchAccount(carId, account);
+                            } catch (JSONException e1) {
+                                try {
+                                    searchAccount(carId, account);
+                                } catch (JSONException e2) {
+                                    MyApplication.showToast("网络连接异常，请稍后再试！");
+                                }
+                            }
+                        }
+                        super.run();
+                    }
+                }.start();
+            }
+        });
+       /* builder.setIcon(R.drawable.rmb);
         builder.setTitle("小车账户充值");
         builder.setMessage("在"+simpleDateFormat.format(date)+" 将要给"+carId+"号小车充值"+account+"元");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -121,25 +171,24 @@ public class CarAccountActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //无操作
             }
-        });
-        builder.show();
+        });*/
     }
 
     private void searchAccount(Integer carId, String account) throws JSONException {
-        String http=null;
+        String http = null;
         if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
-            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
-        }else {
-            http=MyApplication.HTTP;
+            http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this, ConstantValue.IPVALUE, ""));
+        } else {
+            http = MyApplication.HTTP;
         }
-        Integer rechargeNumber=Integer.parseInt(account);
-        String path=http+MyApplication.HTTPSETCARACCOUNTRECHARGE;
+        Integer rechargeNumber = Integer.parseInt(account);
+        String path = http + MyApplication.HTTPSETCARACCOUNTRECHARGE;
         String generateResult = GenerateJsonUtil.GenerateSetCarAccountRecharge(carId, rechargeNumber);
         String httpResult = HttpUtil.doPost(path, generateResult);
         String resolveSimple = ResolveJson.ResolveSimple(httpResult);
         Message msg = Message.obtain();
-        msg.what=SETCATACCOUNT;
-        msg.obj=resolveSimple;
+        msg.what = SETCATACCOUNT;
+        msg.obj = resolveSimple;
         mHandler.sendMessage(msg);
     }
 
@@ -149,8 +198,35 @@ public class CarAccountActivity extends AppCompatActivity {
      * @param carAccountBalance
      */
     private void showCarAccountBalanceDialog(Integer carAccountBalance) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.styletest);//TODO 背景透明了，需要半透明
-        builder.setIcon(R.drawable.rmb);
+        View view = View.inflate(this, R.layout.dialog_myself, null);
+        tvTimeRecharge = (TextView) view.findViewById(R.id.tv_time_recharge);
+        btnCancel = (Button) view.findViewById(R.id.btn_cancel);
+        btnIgnore = (Button) view.findViewById(R.id.btn_ignore);
+        btnDetermine = (Button) view.findViewById(R.id.btn_determine);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.NoBackGroundDialog);
+        final AlertDialog dialog = builder.create();
+        dialog.setView(view);
+        dialog.show();
+        tvTimeRecharge.setText("小车账户余额：" + carAccountBalance + "元");
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnIgnore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnDetermine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+       /* builder.setIcon(R.drawable.rmb);
         builder.setTitle("小车账户查询");
         builder.setMessage("小车账户余额：" + carAccountBalance + "元");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -170,8 +246,7 @@ public class CarAccountActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 //无操作
             }
-        });
-        builder.show();
+        });*/
     }
 
 
@@ -208,9 +283,9 @@ public class CarAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String account = etAccountNumber.getText().toString().trim();
-                if (account != null&&!TextUtils.isEmpty(account)) {
-                    showRechargeAccount(carId,account);
-                }else {
+                if (account != null && !TextUtils.isEmpty(account)) {
+                    showRechargeAccount(carId, account);
+                } else {
                     MyApplication.showToast("请输入要充值的金额");
                 }
             }
@@ -263,11 +338,11 @@ public class CarAccountActivity extends AppCompatActivity {
     }
 
     private void rechargeCarBalance(Integer carId) throws JSONException {
-        String http=null;
+        String http = null;
         if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
-            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
-        }else {
-            http=MyApplication.HTTP;
+            http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this, ConstantValue.IPVALUE, ""));
+        } else {
+            http = MyApplication.HTTP;
         }
         String path = http + MyApplication.HTTPGETCARACCOUNTBALANCE;
         String generateResult = GenerateJsonUtil.GenerateSimple(carId);
