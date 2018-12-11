@@ -54,6 +54,7 @@
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="80dp"
+            android:textColor="#fff"
             android:background="@drawable/selector_btn"
             android:text="查询"
             android:textSize="20sp" />
@@ -101,6 +102,7 @@
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="80dp"
+            android:textColor="#fff"
             android:background="@drawable/selector_btn"
             android:text="设置"
             android:textSize="20sp" />
@@ -125,6 +127,7 @@
             android:layout_width="70dp"
             android:layout_height="30dp"
             android:layout_marginLeft="200dp"
+            android:textColor="#fff"
             android:background="@drawable/selector_btn"
             android:text="查询"
             android:textSize="20sp" />

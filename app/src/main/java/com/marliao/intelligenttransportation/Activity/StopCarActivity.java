@@ -45,6 +45,7 @@ public class StopCarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stop_car);
         initUI();
+        getCarParkingRateRightNow();
         currentParkingRate();//当前停车费率
         modifyParkingRate();//修改停车费率
         currentParkingSpaceInquiry();//当前车位查询
@@ -122,66 +123,94 @@ public class StopCarActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    String http = null;
-                    if (SpUtil.getBoolean(StopCarActivity.this, ConstantValue.IPSETTING, false)) {
-                        http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(StopCarActivity.this, ConstantValue.IPVALUE, ""));
-                    } else {
-                        http = MyApplication.HTTP;
-                    }
-                    String path = http + MyApplication.HTTPSETPARKRATE;
-                    String generateResult = GenerateJsonUtil.GenerateSetParkRate(unit, Integer.parseInt(rate));
-                    String httpResult = HttpUtil.doPost(path, generateResult);
-                    final String result = ResolveJson.ResolveSimple(httpResult);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (result.equals("ok")) {
-                                MyApplication.showToast("费率设置成功！");
-                            }
-                        }
-                    });
+                    setCarRate(rate,unit);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        setCarRate(rate,unit);
+                    } catch (JSONException e1) {
+                        try {
+                            setCarRate(rate,unit);
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
+                        }
+                    }
                 }
                 super.run();
             }
         }.start();
     }
 
+    private void setCarRate(String rate, String unit) throws JSONException {
+        String http = null;
+        if (SpUtil.getBoolean(StopCarActivity.this, ConstantValue.IPSETTING, false)) {
+            http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(StopCarActivity.this, ConstantValue.IPVALUE, ""));
+        } else {
+            http = MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPSETPARKRATE;
+        String generateResult = GenerateJsonUtil.GenerateSetParkRate(unit, Integer.parseInt(rate));
+        String httpResult = HttpUtil.doPost(path, generateResult);
+        final String result = ResolveJson.ResolveSimple(httpResult);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (result.equals("ok")) {
+                    MyApplication.showToast("费率设置成功！");
+                }
+            }
+        });
+    }
+
     private void currentParkingRate() {
         btnCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread() {
-                    @Override
-                    public void run() {
+                getCarParkingRateRightNow();
+            }
+        });
+    }
+
+    private void getCarParkingRateRightNow() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    getCarParkingRate();
+                } catch (JSONException e) {
+                    try {
+                        getCarParkingRate();
+                    } catch (JSONException e1) {
                         try {
-                            String http = null;
-                            if (SpUtil.getBoolean(StopCarActivity.this, ConstantValue.IPSETTING, false)) {
-                                http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(StopCarActivity.this, ConstantValue.IPVALUE, ""));
-                            } else {
-                                http = MyApplication.HTTP;
-                            }
-                            String path = http + MyApplication.HTTPGETPARKRATE;
-                            String httpResult = HttpUtil.doPost(path, null);
-                            Log.i("********", httpResult);
-                            final GetParkRate getParkRate = ResolveJson.ResolveGetParkRate(httpResult);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (getParkRate.getCount().equals("Count")) {
-                                        tvCurrentRate.setText(getParkRate.getMoney() + "次/元");
-                                    } else {
-                                        tvCurrentRate.setText(getParkRate.getMoney() + "小时/元");
-                                    }
-                                }
-                            });
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            getCarParkingRate();
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
                         }
-                        super.run();
                     }
-                }.start();
+                }
+                super.run();
+            }
+        }.start();
+    }
+
+    private void getCarParkingRate() throws JSONException {
+        String http = null;
+        if (SpUtil.getBoolean(StopCarActivity.this, ConstantValue.IPSETTING, false)) {
+            http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(StopCarActivity.this, ConstantValue.IPVALUE, ""));
+        } else {
+            http = MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPGETPARKRATE;
+        String httpResult = HttpUtil.doPost(path, null);
+        Log.i("********", httpResult);
+        final GetParkRate getParkRate = ResolveJson.ResolveGetParkRate(httpResult);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (getParkRate.getCount().equals("Count")) {
+                    tvCurrentRate.setText(getParkRate.getMoney() + "次/元");
+                } else {
+                    tvCurrentRate.setText(getParkRate.getMoney() + "小时/元");
+                }
             }
         });
     }

@@ -82,6 +82,7 @@
                         android:id="@+id/btn_search"
                         android:layout_width="60dp"
                         android:layout_height="25dp"
+                        android:textColor="#FFF"
                         android:layout_marginLeft="20dp"
                         android:background="@drawable/selector_btn"
                         android:text="查询" />
@@ -132,6 +133,7 @@
                         android:id="@+id/btn_recharge"
                         android:layout_width="60dp"
                         android:layout_height="25dp"
+                        android:textColor="#FFF"
                         android:layout_marginLeft="20dp"
                         android:background="@drawable/selector_btn"
                         android:text="充值" />

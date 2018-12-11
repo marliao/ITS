@@ -11,6 +11,6 @@
 
     <style name="styletest" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">false</item><!--半透明-->
-        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>&lt;!&ndash;背景透明&ndash;&gt;-->
     </style>
 </resources>

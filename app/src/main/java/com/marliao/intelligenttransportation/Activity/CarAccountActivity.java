@@ -93,23 +93,17 @@ public class CarAccountActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            String http=null;
-                            if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
-                                http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
-                            }else {
-                                http=MyApplication.HTTP;
-                            }
-                            Integer rechargeNumber=Integer.parseInt(account);
-                            String path=http+MyApplication.HTTPSETCARACCOUNTRECHARGE;
-                            String generateResult = GenerateJsonUtil.GenerateSetCarAccountRecharge(carId, rechargeNumber);
-                            String httpResult = HttpUtil.doPost(path, generateResult);
-                            String resolveSimple = ResolveJson.ResolveSimple(httpResult);
-                            Message msg = Message.obtain();
-                            msg.what=SETCATACCOUNT;
-                            msg.obj=resolveSimple;
-                            mHandler.sendMessage(msg);
+                            searchAccount(carId,account);
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            try {
+                                searchAccount(carId,account);
+                            } catch (JSONException e1) {
+                                try {
+                                    searchAccount(carId,account);
+                                } catch (JSONException e2) {
+                                    MyApplication.showToast("网络连接异常，请稍后再试！");
+                                }
+                            }
                         }
                         super.run();
                     }
@@ -129,6 +123,24 @@ public class CarAccountActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    private void searchAccount(Integer carId, String account) throws JSONException {
+        String http=null;
+        if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
+            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
+        }else {
+            http=MyApplication.HTTP;
+        }
+        Integer rechargeNumber=Integer.parseInt(account);
+        String path=http+MyApplication.HTTPSETCARACCOUNTRECHARGE;
+        String generateResult = GenerateJsonUtil.GenerateSetCarAccountRecharge(carId, rechargeNumber);
+        String httpResult = HttpUtil.doPost(path, generateResult);
+        String resolveSimple = ResolveJson.ResolveSimple(httpResult);
+        Message msg = Message.obtain();
+        msg.what=SETCATACCOUNT;
+        msg.obj=resolveSimple;
+        mHandler.sendMessage(msg);
     }
 
     /**
@@ -231,29 +243,41 @@ public class CarAccountActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            String http=null;
-                            if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
-                                http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
-                            }else {
-                                http=MyApplication.HTTP;
-                            }
-                            String path = http + MyApplication.HTTPGETCARACCOUNTBALANCE;
-                            String generateResult = GenerateJsonUtil.GenerateSimple(carId);
-                            String httpResult = HttpUtil.doPost(path, generateResult);
-                            GetCarAccountBalance getCarAccountBalance = ResolveJson.ResolveGetCarAccountBalance(httpResult);
-                            Integer carAccountBalance = getCarAccountBalance.getBanlance();
-                            Message msg = Message.obtain();
-                            msg.what = GETCARACCOUNTBALANCE;
-                            msg.obj = carAccountBalance;
-                            mHandler.sendMessage(msg);
+                            rechargeCarBalance(carId);
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            try {
+                                rechargeCarBalance(carId);
+                            } catch (JSONException e1) {
+                                try {
+                                    rechargeCarBalance(carId);
+                                } catch (JSONException e2) {
+                                    MyApplication.showToast("网络连接异常，请稍后再试！");
+                                }
+                            }
                         }
                         super.run();
                     }
                 }.start();
             }
         });
+    }
+
+    private void rechargeCarBalance(Integer carId) throws JSONException {
+        String http=null;
+        if (SpUtil.getBoolean(CarAccountActivity.this, ConstantValue.IPSETTING, false)) {
+            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(CarAccountActivity.this,ConstantValue.IPVALUE,""));
+        }else {
+            http=MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPGETCARACCOUNTBALANCE;
+        String generateResult = GenerateJsonUtil.GenerateSimple(carId);
+        String httpResult = HttpUtil.doPost(path, generateResult);
+        GetCarAccountBalance getCarAccountBalance = ResolveJson.ResolveGetCarAccountBalance(httpResult);
+        Integer carAccountBalance = getCarAccountBalance.getBanlance();
+        Message msg = Message.obtain();
+        msg.what = GETCARACCOUNTBALANCE;
+        msg.obj = carAccountBalance;
+        mHandler.sendMessage(msg);
     }
 
     private void setSpinner() {

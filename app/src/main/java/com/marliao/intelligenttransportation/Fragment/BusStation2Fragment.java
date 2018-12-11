@@ -1,6 +1,7 @@
 package com.marliao.intelligenttransportation.Fragment;
 
 import android.os.Bundle;
+import android.security.keystore.KeyNotYetValidException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,8 @@ import com.marliao.intelligenttransportation.Utils.SpUtil;
 import com.marliao.intelligenttransportation.db.dao.Bus2BusStation;
 import com.marliao.intelligenttransportation.db.dao.GetAllSense;
 import com.marliao.intelligenttransportation.enige.MyApplication;
+
+import org.json.JSONException;
 
 import java.util.List;
 import java.util.Timer;
@@ -58,40 +61,52 @@ public class BusStation2Fragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    String http = null;
-                    if (SpUtil.getBoolean(MyApplication.getContext(), ConstantValue.IPSETTING, false)) {
-                        String string = SpUtil.getString(MyApplication.getContext(), ConstantValue.IPVALUE, "");
-                        http = GenerateJsonUtil.GenerateHttp(string);
-                    } else {
-                        http = MyApplication.HTTP;
-                    }
-
-                    String allSense = http + MyApplication.HTTPGETALLSENSE;
-                    String sllSenseResult = HttpUtil.doPost(allSense, null);
-                    final GetAllSense getAllSense = ResolveJson.ResolveGetAllSense(sllSenseResult);
-
-                    String busStationInfo = http + MyApplication.HTTPGETBUSSTATIONINFO;
-                    String busStationInfoResult2 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(2));
-                    final List<Bus2BusStation> bus2BusStationList2 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult2);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String station1 = "\n";
-                            for (int i = 0; i < bus2BusStationList2.size(); i++) {
-                                station1 += bus2BusStationList2.get(i).getBusId() + "号公交：" + bus2BusStationList2.get(i).getDistance() + "m \n\n";
-                            }
-                            tvBus2.setText(station1);
-                            //候车环境
-                            tvWaitBus2.setText("\nPM2.5：" + getAllSense.getPm_2_5() + "μg/m3 \n\n温度：" + getAllSense.getTemperature() + "℃ \n\n湿度：" +
-                                    "" + getAllSense.getHumidity() + "% \n\nCO2：" + getAllSense.getCo_2());
-                        }
-                    });
+                    getBus2Rate();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    try {
+                        getBus2Rate();
+                    } catch (JSONException e1) {
+                        try {
+                            getBus2Rate();
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
+                        }
+                    }
                 }
                 super.run();
             }
         }.start();
+    }
+
+    private void getBus2Rate() throws JSONException {
+        String http = null;
+        if (SpUtil.getBoolean(MyApplication.getContext(), ConstantValue.IPSETTING, false)) {
+            String string = SpUtil.getString(MyApplication.getContext(), ConstantValue.IPVALUE, "");
+            http = GenerateJsonUtil.GenerateHttp(string);
+        } else {
+            http = MyApplication.HTTP;
+        }
+
+        String allSense = http + MyApplication.HTTPGETALLSENSE;
+        String sllSenseResult = HttpUtil.doPost(allSense, null);
+        final GetAllSense getAllSense = ResolveJson.ResolveGetAllSense(sllSenseResult);
+
+        String busStationInfo = http + MyApplication.HTTPGETBUSSTATIONINFO;
+        String busStationInfoResult2 = HttpUtil.doPost(busStationInfo, GenerateJsonUtil.GenerateGetBusStationInfo(2));
+        final List<Bus2BusStation> bus2BusStationList2 = ResolveJson.ResolveGetBusStationInfo(busStationInfoResult2);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String station1 = "\n";
+                for (int i = 0; i < bus2BusStationList2.size(); i++) {
+                    station1 += bus2BusStationList2.get(i).getBusId() + "号公交：" + bus2BusStationList2.get(i).getDistance() + "m \n\n";
+                }
+                tvBus2.setText(station1);
+                //候车环境
+                tvWaitBus2.setText("\nPM2.5：" + getAllSense.getPm_2_5() + "μg/m3 \n\n温度：" + getAllSense.getTemperature() + "℃ \n\n湿度：" +
+                        "" + getAllSense.getHumidity() + "% \n\nCO2：" + getAllSense.getCo_2());
+            }
+        });
     }
 
 }

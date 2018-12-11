@@ -107,36 +107,48 @@ public class RoadStatusActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    String http = null;
-                    if (SpUtil.getBoolean(RoadStatusActivity.this, ConstantValue.IPSETTING, false)) {
-                        http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(RoadStatusActivity.this, ConstantValue.IPVALUE, ""));
-                    } else {
-                        http = MyApplication.HTTP;
-                    }
-                    String path = http + MyApplication.HTTPGETTRAFFICLIGHTCONFIGACTION;
-                    mGetTrafficLightConfigActionList = new ArrayList<>();
-                    for (int i = 1; i < 6; i++) {
-                        String generateResult = GenerateJsonUtil.GenerateGetTrafficLightConfigAction(i);
-                        String httpResult = HttpUtil.doPost(path, generateResult);
-                        GetTrafficLightConfigAction getTrafficLightConfigAction = ResolveJson.ResolveGetTrafficLightConfigAction(httpResult, i);
-                        mGetTrafficLightConfigActionList.add(getTrafficLightConfigAction);
-                    }
-                    //默认按红灯时长升序排列
-                    Sequence.redLightAscending(mGetTrafficLightConfigActionList);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //准备数据适配器
-                            mTableAdapter = new TableAdapter(mGetTrafficLightConfigActionList);
-                            lvTableItem.setAdapter(mTableAdapter);
-                        }
-                    });
+                    getTrafficLightInformation();
                 } catch (JSONException e) {
-                    tabularData();
+                    try {
+                        getTrafficLightInformation();
+                    } catch (JSONException e1) {
+                        try {
+                            getTrafficLightInformation();
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
+                        }
+                    }
                 }
                 super.run();
             }
         }.start();
+    }
+
+    private void getTrafficLightInformation() throws JSONException {
+        String http = null;
+        if (SpUtil.getBoolean(RoadStatusActivity.this, ConstantValue.IPSETTING, false)) {
+            http = GenerateJsonUtil.GenerateHttp(SpUtil.getString(RoadStatusActivity.this, ConstantValue.IPVALUE, ""));
+        } else {
+            http = MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPGETTRAFFICLIGHTCONFIGACTION;
+        mGetTrafficLightConfigActionList = new ArrayList<>();
+        for (int i = 1; i < 6; i++) {
+            String generateResult = GenerateJsonUtil.GenerateGetTrafficLightConfigAction(i);
+            String httpResult = HttpUtil.doPost(path, generateResult);
+            GetTrafficLightConfigAction getTrafficLightConfigAction = ResolveJson.ResolveGetTrafficLightConfigAction(httpResult, i);
+            mGetTrafficLightConfigActionList.add(getTrafficLightConfigAction);
+        }
+        //默认按红灯时长升序排列
+        Sequence.redLightAscending(mGetTrafficLightConfigActionList);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //准备数据适配器
+                mTableAdapter = new TableAdapter(mGetTrafficLightConfigActionList);
+                lvTableItem.setAdapter(mTableAdapter);
+            }
+        });
     }
 
     private void setSpinnerData() {

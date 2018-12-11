@@ -61,6 +61,7 @@
             android:layout_height="35dp"
             android:background="@drawable/selector_btn"
             android:padding="5dp"
+            android:textColor="#fff"
             android:text="查询"
             android:textSize="18sp" />
     </LinearLayout>

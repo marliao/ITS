@@ -66,18 +66,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showData(Map<Object, Object> mainAllInfo) {
         GetAllSense getAllSense = (GetAllSense) mainAllInfo.get("getAllSense");
-        tv_pm_tem_co_shidu.setText("\nPM2.5：" + getAllSense.getPm_2_5() + "μg/m3 \n\n温度：" + getAllSense.getTemperature() + "℃ \n\n湿度：" +
-                "" + getAllSense.getHumidity() + "% \n\nCO2：" + getAllSense.getCo_2());
+        tv_pm_tem_co_shidu.setText("\nPM2.5：" + getAllSense.getPm_2_5() + "μg/m3 ,温度：" + getAllSense.getTemperature() + "℃ \n\n湿度：" +
+                "" + getAllSense.getHumidity() + "% ,CO2：" + getAllSense.getCo_2()+"\n");
         List<Bus2BusStation> busStation1 = (List<Bus2BusStation>) mainAllInfo.get("BusStation1");
         String station1 = "\n";
         for (int i = 0; i < busStation1.size(); i++) {
-            station1 += busStation1.get(i).getBusId() + "号公交：" + busStation1.get(i).getDistance() + "m \n\n";
+            station1 += busStation1.get(i).getBusId() + "号公交：" + busStation1.get(i).getDistance() + "m   ";
         }
         tv_bus1.setText(station1);
         List<Bus2BusStation> busStation2 = (List<Bus2BusStation>) mainAllInfo.get("BusStation2");
         String station2 = "\n";
         for (int i = 0; i < busStation2.size(); i++) {
-            station2 += busStation2.get(i).getBusId() + "号公交：" + busStation2.get(i).getDistance() + "m \n\n";
+            station2 += busStation2.get(i).getBusId() + "号公交：" + busStation2.get(i).getDistance() + "m   ";
         }
         tv_bus2.setText(station2);
     }

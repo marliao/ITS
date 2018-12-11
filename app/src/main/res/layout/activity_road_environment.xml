@@ -45,6 +45,7 @@
         <Button
             android:id="@+id/btn_search_air_quality"
             android:layout_width="70dp"
+            android:textColor="#fff"
             android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:background="@drawable/selector_btn"
@@ -110,6 +111,7 @@
             android:layout_width="70dp"
             android:layout_height="30dp"
             android:layout_centerInParent="true"
+            android:textColor="#fff"
             android:background="@drawable/selector_btn"
             android:text="查询" />
     </RelativeLayout>

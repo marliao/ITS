@@ -1,6 +1,7 @@
 package com.marliao.intelligenttransportation.Activity;
 
 import android.content.Intent;
+import android.hardware.camera2.CaptureFailure;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -82,41 +83,54 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void run() {
                 try {
-                    String http=null;
-                    if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
-                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
-                    }else {
-                        http=MyApplication.HTTP;
-                    }
-                    String path = http + MyApplication.HTTPGETCARSPEED;
-                    String params = GenerateJsonUtil.GenerateSimple(CarId);
-                    String getCarSpeedReuslt = HttpUtil.doPost(path, params);
-                    final GetCarSpeed getCarSpeed = ResolveJson.ResolveGetCarSpeed(getCarSpeedReuslt);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            switch (CarId) {
-                                case 1:
-                                    tvMyCar1.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
-                                    break;
-                                case 2:
-                                    tvMyCar2.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
-                                    break;
-                                case 3:
-                                    tvMyCar3.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
-                                    break;
-                                case 4:
-                                    tvMyCar4.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
-                                    break;
-                            }
-                        }
-                    });
+                    getCarSpeed(CarId);
+
                 } catch (JSONException e) {
-                    initData(CarId);
+                    try {
+                        getCarSpeed(CarId);
+                    } catch (JSONException e1) {
+                        try {
+                            getCarSpeed(CarId);
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
+                        }
+                    }
                 }
                 super.run();
             }
         }.start();
+    }
+
+    private void getCarSpeed(final Integer CarId) throws JSONException {
+        String http=null;
+        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
+            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
+        }else {
+            http=MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPGETCARSPEED;
+        String params = GenerateJsonUtil.GenerateSimple(CarId);
+        String getCarSpeedReuslt = HttpUtil.doPost(path, params);
+        final GetCarSpeed getCarSpeed = ResolveJson.ResolveGetCarSpeed(getCarSpeedReuslt);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (CarId) {
+                    case 1:
+                        tvMyCar1.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                        break;
+                    case 2:
+                        tvMyCar2.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                        break;
+                    case 3:
+                        tvMyCar3.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                        break;
+                    case 4:
+                        tvMyCar4.setText("车速：" + getCarSpeed.getCarSpeed() + "km/h");
+                        break;
+                }
+            }
+        });
     }
 
     private void initUI() {
@@ -214,29 +228,41 @@ public class MyCarActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void run() {
                 try {
-                    String http=null;
-                    if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
-                        http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
-                    }else {
-                        http=MyApplication.HTTP;
-                    }
-                    String path = http + MyApplication.HTTPSETCARMOVE;
-                    String generateResult = GenerateJsonUtil.GenerateSetCarMove(CarId, CarAction);
-                    String httpResult = HttpUtil.doPost(path, generateResult);
-                    final String result = ResolveJson.ResolveSimple(httpResult);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!result.equals("ok")) {
-                                MyApplication.showToast("服务器连接失败！");
-                            }
-                        }
-                    });
+                    setTheCarStatus(CarId,CarAction);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        setTheCarStatus(CarId,CarAction);
+                    } catch (JSONException e1) {
+                        try {
+                            setTheCarStatus(CarId,CarAction);
+                        } catch (JSONException e2) {
+                            MyApplication.showToast("网络连接异常，请稍后再试！");
+                        }
+                    }
                 }
                 super.run();
             }
         }.start();
+    }
+
+    private void setTheCarStatus(int CarId, String CarAction) throws JSONException {
+        String http=null;
+        if (SpUtil.getBoolean(MyCarActivity.this, ConstantValue.IPSETTING, false)) {
+            http=GenerateJsonUtil.GenerateHttp(SpUtil.getString(MyCarActivity.this,ConstantValue.IPVALUE,""));
+        }else {
+            http=MyApplication.HTTP;
+        }
+        String path = http + MyApplication.HTTPSETCARMOVE;
+        String generateResult = GenerateJsonUtil.GenerateSetCarMove(CarId, CarAction);
+        String httpResult = HttpUtil.doPost(path, generateResult);
+        final String result = ResolveJson.ResolveSimple(httpResult);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!result.equals("ok")) {
+                    MyApplication.showToast("服务器连接失败！");
+                }
+            }
+        });
     }
 }
